@@ -24,7 +24,7 @@ object DatabaseFactory {
         Database.connect(dataSource)
 
         transaction {
-            SchemaUtils.create(UserTable)
+            SchemaUtils.createMissingTablesAndColumns(UserTable, CountryTable)
         }
 
         println("PostgreSQL (Neon) подключён успешно")

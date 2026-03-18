@@ -3,6 +3,7 @@ package di
 
 import data.repository.UserRepositoryImpl
 import domain.repository.UserRepository
+import domain.usecase.GetUserCountriesUseCase
 import domain.usecase.GetUserUseCase
 import domain.usecase.LoginUseCase
 import io.ktor.server.application.Application
@@ -15,9 +16,10 @@ object AppContainer {
     val userRepository: UserRepository by lazy { UserRepositoryImpl() }
     val loginUseCase: LoginUseCase by lazy { LoginUseCase(userRepository, PasswordHasher) }
     val getUserUseCase: GetUserUseCase by lazy { GetUserUseCase(userRepository) }
+    val getUserCountriesUseCase: GetUserCountriesUseCase by lazy { GetUserCountriesUseCase(userRepository) }
 
     val authController: AuthController by lazy { AuthController(loginUseCase) }
-    val userController: UserController by lazy { UserController(getUserUseCase) }
+    val userController: UserController by lazy { UserController(getUserUseCase, getUserCountriesUseCase) }
 }
 
 fun Application.appModule() {
