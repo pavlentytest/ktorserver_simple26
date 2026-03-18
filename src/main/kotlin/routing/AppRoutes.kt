@@ -2,11 +2,10 @@ package routing
 
 import di.AppContainer
 import io.ktor.server.application.Application
-import io.ktor.server.routing.*
+import io.ktor.server.routing.routing
 
 
 fun Application.configureRouting() {
-    val greetingController = AppContainer.greetingController
-    greetingController.configureRoutes(this)
-    println("Маршруты настроены")
+    AppContainer.authController.configure(this)
+    AppContainer.userController.configure(this)
 }

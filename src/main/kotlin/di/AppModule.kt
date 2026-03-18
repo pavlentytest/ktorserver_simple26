@@ -1,26 +1,25 @@
 package di
 
 
-import data.repository.AuthRepositoryImpl
-import data.repository.GreetingRepositoryImpl
-import domain.repository.AuthRepository
-import domain.repository.GreetingRepository
-import domain.usecase.GetGreetingUseCase
+import data.repository.UserRepositoryImpl
+import domain.repository.UserRepository
+import domain.usecase.GetUserUseCase
 import domain.usecase.LoginUseCase
-import presentation.GreetingController
+import io.ktor.server.application.Application
+import presentation.AuthController
+import presentation.UserController
+import security.PasswordHasher
 import kotlin.getValue
 
 object AppContainer {
-    val greetingRepository: GreetingRepository by lazy { GreetingRepositoryImpl() }
-    val authRepository: AuthRepository by lazy { AuthRepositoryImpl() }
+    val userRepository: UserRepository by lazy { UserRepositoryImpl() }
+    val loginUseCase: LoginUseCase by lazy { LoginUseCase(userRepository, PasswordHasher) }
+    val getUserUseCase: GetUserUseCase by lazy { GetUserUseCase(userRepository) }
 
-    val getGreetingUseCase: GetGreetingUseCase by lazy { GetGreetingUseCase(greetingRepository) }
-    val loginUseCase: LoginUseCase by lazy { LoginUseCase(authRepository) }
-
-    val greetingController: GreetingController by lazy {
-        GreetingController(getGreetingUseCase, loginUseCase)
-    }
+    val authController: AuthController by lazy { AuthController(loginUseCase) }
+    val userController: UserController by lazy { UserController(getUserUseCase) }
 }
-fun appModule() {
-    println("DI инициализирован!")
+
+fun Application.appModule() {
+    println("DI инициализирован")
 }
