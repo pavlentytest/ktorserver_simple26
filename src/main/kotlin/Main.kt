@@ -6,7 +6,10 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -15,6 +18,8 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.slf4j.event.Level
+
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -29,6 +34,18 @@ fun Application.module() {
             prettyPrint = true
             ignoreUnknownKeys = true
         })
+    }
+
+
+    install(CallLogging) {
+        level = Level.INFO
+        format { call ->
+            val status = call.response.status()
+            val httpMethod = call.request.httpMethod.value
+            val userAgent = call.request.headers["User-Agent"]
+            val path = call.request.path()
+            "[$status] $httpMethod $path - UA: $userAgent"
+        }
     }
 
     routing {
