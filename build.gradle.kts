@@ -19,7 +19,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.ktor:ktor-server-call-logging-jvm")
     implementation("ch.qos.logback:logback-classic:1.5.6")
-
+    implementation("io.ktor:ktor-server-auth-jwt")
 }
 
 tasks.test {
