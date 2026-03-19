@@ -5,6 +5,7 @@ import data.dto.UserResponseDto
 import di.AppContainer.getUserUseCase
 import domain.usecase.GetUserCountriesUseCase
 import domain.usecase.GetUserUseCase
+import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.jwt.JWTPrincipal
 
@@ -22,7 +23,7 @@ class UserController(
     fun configure(application: Application) {
         application.routing {
             authenticate("auth-jwt") {
-                get("/users/me") {
+                /*get("/users/me") {
                     val principal = call.principal<JWTPrincipal>()
                     val username = principal!!.payload.getClaim("username").asString()
                     val user = getUserUseCase(username)
@@ -37,9 +38,45 @@ class UserController(
                     } else {
                         call.respond(HttpStatusCode.NotFound, mapOf("error" to "Пользователь не найден"))
                     }
-                }
+                }*/
+                get("/users/me", {
+                    tags = listOf("Users")
+                    summary = "Получить профиль текущего пользователя"
+                    securitySchemeNames = listOf("MyJwtAuth")  // Название схемы, которую мы пропишем в install(OpenApi)
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Профиль пользователя"
+                            body<UserResponseDto>()
+                        }
+                        HttpStatusCode.NotFound to {
+                            description = "Пользователь не найден"
+                        }
+                    }
+                }) {
+                    val principal = call.principal<JWTPrincipal>()
+                    val username = principal!!.payload.getClaim("username").asString()
+                    val user = getUserUseCase(username)
 
-                get("/users/me/countries") {
+                    if (user != null) {
+                        call.respond(UserResponseDto(user.id, user.username, user.role))
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, mapOf("error" to "Пользователь не найден"))
+                    }
+                }
+                get("/users/me/countries", {
+                    tags = listOf("Users", "Countries")
+                    summary = "Список посещенных стран пользователя"
+                    securitySchemeNames = listOf("MyJwtAuth")
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Список стран"
+                            body<List<CountryResponseDto>>() // Библиотека поймет список объектов
+                        }
+                        HttpStatusCode.InternalServerError to {
+                            description = "Ошибка сервера"
+                        }
+                    }
+                }) {
                     val principal = call.principal<JWTPrincipal>()
                     val username = principal!!.payload.getClaim("username").asString()
                     val user = getUserUseCase(username)
@@ -68,7 +105,38 @@ class UserController(
                         }
                     )
                 }
+
+            /*    get("/users/me/countries") {
+                    val principal = call.principal<JWTPrincipal>()
+                    val username = principal!!.payload.getClaim("username").asString()
+                    val user = getUserUseCase(username)
+
+                    if (user == null) {
+                        call.respond(HttpStatusCode.NotFound, mapOf("error" to "Пользователь не найден"))
+                        return@get
+                    }
+
+                    val countriesResult = getUserCountriesUseCase(user.id)
+
+                    countriesResult.fold(
+                        onSuccess = { countries ->
+                            val dtos = countries.map { country ->
+                                CountryResponseDto(
+                                    id = country.id,
+                                    name = country.name,
+                                    code = country.code,
+                                    visitedAt = country.visitedAt
+                                )
+                            }
+                            call.respond(HttpStatusCode.OK, dtos)
+                        },
+                        onFailure = { e ->
+                            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to (e.message ?: "Неизвестная ошибка")))
+                        }
+                    )
+                }*/
             }
+
         }
     }
 }

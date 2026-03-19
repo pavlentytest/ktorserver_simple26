@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
@@ -36,6 +37,10 @@ dependencies {
     implementation("at.favre.lib:bcrypt:0.10.2")
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
+
+    implementation("io.github.smiley4:ktor-redoc:5.0.2")
+    implementation("io.github.smiley4:ktor-openapi:5.4.0")
+    implementation("io.github.smiley4:ktor-swagger-ui:3.3.0")
 }
 
 tasks.test {
