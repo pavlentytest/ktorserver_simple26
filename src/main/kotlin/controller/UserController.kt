@@ -1,8 +1,7 @@
-package presentation
+package controller
 
 import data.dto.CountryResponseDto
 import data.dto.UserResponseDto
-import di.AppContainer.getUserUseCase
 import domain.usecase.GetUserCountriesUseCase
 import domain.usecase.GetUserUseCase
 import io.github.smiley4.ktoropenapi.get
@@ -14,7 +13,6 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import jdk.internal.net.http.common.Log
 
 class UserController(
     private val getUserUseCase: GetUserUseCase,

@@ -7,8 +7,8 @@ import domain.usecase.GetUserCountriesUseCase
 import domain.usecase.GetUserUseCase
 import domain.usecase.LoginUseCase
 import io.ktor.server.application.Application
-import presentation.AuthController
-import presentation.UserController
+import controller.AuthController
+import controller.UserController
 import security.PasswordHasher
 import kotlin.getValue
 
