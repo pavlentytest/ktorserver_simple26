@@ -2,14 +2,11 @@ package presentation
 
 import data.dto.CountryResponseDto
 import data.dto.UserResponseDto
-import di.AppContainer.getUserUseCase
 import domain.usecase.GetUserCountriesUseCase
 import domain.usecase.GetUserUseCase
 import io.github.smiley4.ktoropenapi.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.jwt.JWTPrincipal
-
-
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
@@ -23,26 +20,10 @@ class UserController(
     fun configure(application: Application) {
         application.routing {
             authenticate("auth-jwt") {
-                /*get("/users/me") {
-                    val principal = call.principal<JWTPrincipal>()
-                    val username = principal!!.payload.getClaim("username").asString()
-                    val user = getUserUseCase(username)
-
-                    if (user != null) {
-                        val dto = UserResponseDto(
-                            id = user.id,
-                            username = user.username,
-                            role = user.role
-                        )
-                        call.respond(dto)
-                    } else {
-                        call.respond(HttpStatusCode.NotFound, mapOf("error" to "Пользователь не найден"))
-                    }
-                }*/
                 get("/users/me", {
                     tags = listOf("Users")
                     summary = "Получить профиль текущего пользователя"
-                    securitySchemeNames = listOf("MyJwtAuth")  // Название схемы, которую мы пропишем в install(OpenApi)
+                    securitySchemeNames = listOf("MyJwtAuth")
                     response {
                         HttpStatusCode.OK to {
                             description = "Профиль пользователя"
@@ -70,7 +51,7 @@ class UserController(
                     response {
                         HttpStatusCode.OK to {
                             description = "Список стран"
-                            body<List<CountryResponseDto>>() // Библиотека поймет список объектов
+                            body<List<CountryResponseDto>>()
                         }
                         HttpStatusCode.InternalServerError to {
                             description = "Ошибка сервера"
@@ -106,35 +87,6 @@ class UserController(
                     )
                 }
 
-            /*    get("/users/me/countries") {
-                    val principal = call.principal<JWTPrincipal>()
-                    val username = principal!!.payload.getClaim("username").asString()
-                    val user = getUserUseCase(username)
-
-                    if (user == null) {
-                        call.respond(HttpStatusCode.NotFound, mapOf("error" to "Пользователь не найден"))
-                        return@get
-                    }
-
-                    val countriesResult = getUserCountriesUseCase(user.id)
-
-                    countriesResult.fold(
-                        onSuccess = { countries ->
-                            val dtos = countries.map { country ->
-                                CountryResponseDto(
-                                    id = country.id,
-                                    name = country.name,
-                                    code = country.code,
-                                    visitedAt = country.visitedAt
-                                )
-                            }
-                            call.respond(HttpStatusCode.OK, dtos)
-                        },
-                        onFailure = { e ->
-                            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to (e.message ?: "Неизвестная ошибка")))
-                        }
-                    )
-                }*/
             }
 
         }

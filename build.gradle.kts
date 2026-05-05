@@ -41,6 +41,7 @@ dependencies {
     implementation("io.github.smiley4:ktor-redoc:5.0.2")
     implementation("io.github.smiley4:ktor-openapi:5.4.0")
     implementation("io.github.smiley4:ktor-swagger-ui:3.3.0")
+
 }
 
 tasks.test {

@@ -16,24 +16,14 @@ data class LoginRequest(val username: String, val password: String)
 @Serializable
 data class LoginResponse(val token: String)
 
+@Serializable
+data class ErrorResponse(val error: String, val code: Int? = null)
+
 class AuthController(
     private val loginUseCase: LoginUseCase
 ) {
     fun configure(application: Application) {
         application.routing {
-         /*   post("/login") {
-
-                val request = call.receive<LoginRequest>()
-                val token = loginUseCase.login(request.username, request.password)
-
-                if (token != null) {
-                    call.respond(LoginResponse(token))
-                } else {
-                    call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Неверный логин или пароль"))
-                }
-            }
-
-          */
             post("/login", {
                 tags = listOf("Authentication")
                 summary = "Авторизация пользователя"
@@ -55,7 +45,6 @@ class AuthController(
                     }
                 }
             }) {
-                // Стандартная логика Ktor остается внутри обычного блока
                 val request = call.receive<LoginRequest>()
                 val token = loginUseCase.login(request.username, request.password)
 
